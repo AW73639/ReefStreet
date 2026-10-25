@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReefStreet – the ocean exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Outfit:wght@400;600&display=swap" rel="stylesheet">
+<style nonce="__NONCE__">
+:root{--brass:#e6b450;--coral:#ff7a68;--foam:#eafcff;--up:#4ee0b0;--glass:#0e3a5499}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;min-height:100vh;color:var(--foam);font-family:Outfit,system-ui,sans-serif;background:radial-gradient(1100px 650px at 75% -10%,#145b78,transparent 60%),linear-gradient(#07182a,#041019) fixed}
+header{display:flex;align-items:center;gap:20px;padding:10px 22px;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;font:600 28px Fraunces,Georgia,serif}
+.brand small{display:block;font:italic 500 13px Fraunces,Georgia,serif;color:#86d6d8}
+.stat span{display:block;font-size:12px;color:#86c3cc}.stat b{font:600 21px Fraunces,Georgia,serif;font-variant-numeric:tabular-nums}.stat i{font-style:normal;font-size:13px;margin-left:6px}
+nav,.ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ctl{margin-left:auto}
+button{font:600 14px Outfit,system-ui,sans-serif;color:var(--foam);background:#14506e;border:1px solid #4fc3d055;border-radius:999px;padding:8px 14px;cursor:pointer}
+button:hover{background:#1a6a8c}button:focus-visible,input:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+button.on{background:var(--brass);color:#2a1a02;border-color:var(--brass)}
+button.go{width:100%;padding:13px;font-size:16px;background:linear-gradient(135deg,#e6b450,#ff9d5c);color:#2a1a02;border:0;border-radius:14px 14px 4px 14px}
+#mkt{padding:0 22px 8px;font-size:13px;color:#9fd8de}
+#evbar{margin:0 18px 10px;padding:10px 16px;border-radius:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+#evbar.bad{background:#5b1e2acc;border:1px solid var(--coral)}#evbar.good{background:#0f5a4acc;border:1px solid var(--up)}#evbar i{color:#ffe9b0}
+main{display:grid;grid-template-columns:270px 1fr 350px;gap:14px;padding:0 18px 18px;height:calc(100vh - 150px);min-height:520px}
+.panel{background:var(--glass);border:1px solid #7fe3e633;backdrop-filter:blur(8px);overflow:hidden}
+.card{padding:18px;border-radius:22px}.muted{color:#86c3cc}
+#board{border-radius:22px 6px 22px 6px;display:flex;flex-direction:column}
+#bhead{position:relative;padding:8px}#blist{overflow-y:auto;padding:0 8px 8px;flex:1}
+#sres{position:absolute;left:8px;right:8px;top:52px;background:#0a2b40;border:1px solid #4fc3d055;border-radius:12px;z-index:5;max-height:300px;overflow:auto}
+#sres button{display:block;width:100%;text-align:left;border-radius:0;background:none;border:0;border-bottom:1px dashed #4fc3d033}#sres p{padding:8px 12px;margin:0}
+#mid{border-radius:28px;display:flex;flex-direction:column}
+#side{border-radius:6px 22px 6px 22px;padding:14px;overflow-y:auto}
+.tabs{display:flex;gap:6px;padding:10px 12px 0}
+#cw{position:relative;flex:1;margin:10px;border-radius:20px;overflow:hidden;min-height:260px}
+canvas{display:block;width:100%;height:100%}
+.row{display:grid;grid-template-columns:32px 1fr 64px 76px;align-items:center;gap:6px;width:100%;text-align:left;border-radius:14px;margin-bottom:4px;background:transparent;border:1px solid transparent;padding:7px;position:relative}
+.row.sel{background:#19c3b222;border-color:#19c3b277}.row .ic{font-size:22px}.row b{display:block}.row small{color:#86c3cc;font-size:11px;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.row .pr{text-align:right}.row svg{width:64px;height:24px}
+.rm{position:absolute;right:2px;top:-2px;font-size:14px;color:#86c3cc;padding:0 5px}.rm:hover{color:var(--coral)}
+.up{color:var(--up)}.dn{color:var(--coral)}i{font-style:normal;font-size:12px}
+.hd{display:flex;gap:10px;align-items:center;margin-bottom:8px}.hd span{font-size:34px}.hd b{font:600 20px Fraunces,Georgia,serif}.hd small{display:block;color:#86c3cc}
+.about{font-size:13px;line-height:1.45;background:#06202f99;border-radius:12px;padding:8px 12px;margin-bottom:10px}.about summary{cursor:pointer;font-weight:600}
+.tag{background:#19c3b233;border-radius:8px;padding:1px 8px;font-size:12px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin-bottom:12px;font-variant-numeric:tabular-nums}.kv span{color:#86c3cc}.kv b{text-align:right}
+.seg{display:flex;gap:6px;margin-bottom:10px}.seg button{flex:1}
+label{display:block;font-size:13px;color:#86c3cc;margin-bottom:8px}
+input{width:100%;margin-top:4px;padding:10px;border-radius:10px;border:1px solid #4fc3d055;background:#06202f;color:var(--foam);font:600 16px Outfit,sans-serif}
+.pre{display:flex;gap:6px;margin-bottom:10px}.pre button{flex:1;padding:7px}
+#est{font-size:13px;color:#9fd8de;min-height:34px;margin:4px 0 10px}
+h2{font:600 24px Fraunces,Georgia,serif;margin:0 0 6px}h3{font:600 17px Fraunces,Georgia,serif;margin:16px 0 6px}
+#log{list-style:none;margin:0;padding:0;font-size:13px;color:#b9e3e8}#log li{padding:5px 0;border-bottom:1px dashed #4fc3d033}
+.item{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed #4fc3d033}.item span{font-size:26px}.item small{display:block;color:#86c3cc;font-size:12px}
+.coral{font-size:30px;min-height:44px;letter-spacing:2px}
+#chest{position:absolute;right:26px;bottom:60px;font-size:44px;cursor:pointer;animation:bob 2s ease-in-out infinite;filter:drop-shadow(0 0 14px #ffd166);background:none;border:0;padding:0}
+@keyframes bob{50%{transform:translateY(-12px) rotate(4deg)}}
+#lg{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:5px;z-index:2;max-height:75%;overflow:auto}
+.lg{display:flex;gap:7px;align-items:center;background:#06202fdd;padding:5px 11px;font-size:12px}.lg i{width:13px;height:13px;border-radius:50%;background:var(--c)}.lg small{color:#86c3cc}
+.page{display:block;height:auto;max-width:920px;margin:0 auto;padding:0 18px 30px}
+.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.avs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}.avs button{font-size:22px;padding:6px 10px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px dashed #4fc3d033}tr.me{background:#e6b45022}
+.ladder{list-style:none;padding:0;margin:0}.ladder li{display:flex;gap:14px;padding:12px;border-radius:14px;margin-bottom:6px;opacity:.55}.ladder li.cur{opacity:1;background:#e6b45026;border:1px solid var(--brass)}.ladder li.done{opacity:.9}.ladder span{font-size:34px}.ladder p{margin:2px 0 0;font-size:13px;color:#b9e3e8}
+.bar{height:10px;border-radius:6px;background:#06202f;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,#19c3b2,#e6b450)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:10px 0}.grid2 span{color:#86c3cc}
+#modal{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}#modal>div{background:#0a2b40;border:1px solid var(--brass);border-radius:18px;padding:22px;max-width:420px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:#0a2b40;border:1px solid var(--brass);padding:12px 20px;border-radius:16px;opacity:0;transition:.35s;pointer-events:none;max-width:90vw;z-index:30}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){main{grid-template-columns:1fr;height:auto}#cw{height:55vh;flex:none}}
+@media(prefers-reduced-motion:reduce){#chest{animation:none}}
+</style></head><body>
+
+<div id="login" class="center"><div class="panel card" style="max-width:430px;width:100%;padding:26px">
+ <div class="brand" style="justify-content:center"><span style="font-size:44px">🐚</span><div>ReefStreet<small>the ocean exchange</small></div></div>
+ <p class="muted">Learn investing with sea creatures. Everyone trades the same simulated ocean market and gets their own aquarium. Game pearls only, no real money.</p>
+ <label>Explorer name<input id="ln" maxlength="16" autocomplete="username"></label>
+ <label>Passcode (6 or more characters)<input id="lp" type="password" maxlength="64" autocomplete="current-password"></label>
+ <div class="muted" style="font-size:13px">Pick your avatar (for new explorers)</div><div id="avs" class="avs"></div>
+ <div class="pre"><button id="lin">Log in</button><button id="lup" class="on">Create explorer</button></div>
+ <p id="lerr" class="dn"></p>
+</div></div>
+
+<div id="app" hidden>
+<header>
+ <div class="brand"><span style="font-size:34px">🐚</span><div>ReefStreet<small>the ocean exchange</small></div></div>
+ <div class="stat"><span>Net worth</span><b id="nw">0</b><i id="pl"></i></div>
+ <div class="stat"><span>Pearls in hand</span><b id="cash">0</b></div>
+ <div class="stat"><span>Rank</span><b id="rank"></b></div>
+ <nav><button data-pg="trade" class="on">Trading</button><button data-pg="board">Leaderboard</button><button data-pg="rank">Ranks &amp; profile</button></nav>
+ <div class="ctl"><button id="summon" hidden title="Captain only: make a random event happen for everyone">🌊 Summon event</button><button id="out">Log out</button></div>
+</header>
+<div id="mkt">🌊 Simulated ocean market · every explorer sees the same prices · game pearls only, not financial advice</div><div id="evbar" hidden></div>
+<main id="pg-trade">
+ <aside id="board" class="panel"><div id="bhead"><input id="srch" placeholder="Search or browse companies…" aria-label="Search companies" autocomplete="off"><div id="sres" hidden></div></div><div id="blist"></div></aside>
+ <section id="mid" class="panel">
+  <div class="tabs"><button data-v="sea" class="on">Sea chart</button><button data-v="aq">My aquarium</button></div>
+  <div id="cw"><canvas id="c"></canvas><div id="lg" hidden></div><button id="chest" hidden aria-label="Dividend chest">🧰</button></div>
+ </section>
+ <aside id="side" class="panel">
+  <div class="tabs" style="padding:0 0 12px"><button data-t="trade" class="on">Trade</button><button data-t="harbor">Harbor shop</button><button data-t="reef">Reef vault</button></div>
+  <div id="tp"></div><h3>Ship's log</h3><ul id="log"></ul>
+ </aside>
+</main>
+<main id="pg-board" class="page" hidden></main>
+<main id="pg-rank" class="page" hidden></main>
+</div>
+<div id="modal" hidden><div><h3 id="mt" style="margin-top:0"></h3><p id="mm"></p><div class="pre"><button id="mno">Cancel</button><button id="mok" class="on">OK</button></div></div></div>
+<div id="toast" role="status"></div>
+
+<script nonce="__NONCE__">
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),fmt=n=>n.toLocaleString(undefined,{maximumFractionDigits:n<10?3:2}),m0=n=>Math.round(n).toLocaleString();
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mix=(A,B,k)=>A.map((v,i)=>v+(B[i]-v)*k);
+const START=10000,AVS=['🐠','🐬','🦈','🐙','🐢','🦀','🐳','🧜‍♀️'];
+const RANKS=[
+ [0,'🦐','Plankton','Your pearls have drifted below 9,000. Every explorer has rough tides. Learn from them and swim back up.'],
+ [9000,'🐟','Minnow','You start here with 10,000 pearls. Keep your net worth above 9,000 and you stay a Minnow.'],
+ [11000,'🐠','Clownfish','A 10% gain. Small, steady wins add up faster than you think.'],
+ [15000,'🐬','Dolphin','A 50% gain. Smart and quick. You are reading the currents well.'],
+ [25000,'🦈','Shark','2.5× your start. A serious hunter of opportunity.'],
+ [50000,'🐋','Whale','5× your start. Big enough to make waves.'],
+ [100000,'🔱','Poseidon','10× your start. Ruler of the seas.']];
+const SHOP=[
+ {id:'map',e:'🗺️',n:'Research report',c:300,d:'Reveals the next market event shortly before it hits. Like paying for a research subscription. One use.'},
+ {id:'lh',e:'🔭',n:'Lighthouse forecast',c:400,d:'Shows the recent price momentum of your chosen stock for 20 minutes. Momentum is not a promise!'},
+ {id:'oct',e:'🐙',n:'Octopus Broker account',c:800,d:'A low-fee brokerage: trading fee drops from 1% to 0.25%. Like switching to a cheaper broker.'},
+ {id:'adv',e:'🐬',n:'Dolphin financial advisor',c:120,d:'A portfolio check-up: tells you how spread out your wealth is.'},
+ {id:'dinner',e:'🍤',n:'Crab Shack dinner',c:60,d:'Everyday living costs money. Comes with a fortune cookie containing an investing tip.'},
+ {id:'boat',e:'⛵',n:'Sailboat paint job',c:150,d:'Cosmetic: a little sailboat rides your price wave.'}];
+const BANNER='🌊 Simulated ocean market · every explorer sees the same prices · game pearls only, not financial advice';
+let me=null,S=null,UNI=[],P={},O={},TK=-1,skew=0,nextAt=0,booted=false,lastTick=performance.now(),evs=[];
+const H={},M={},seen=new Set(),MK=[],X={view:'sea',tab:'trade',mode:'buy',amt:'',hi:null,flash:0,hov:null,pg:'trade',av:AVS[0],ri:null,sel:null,peeked:0};
+
+/* ---------- api + login (the session lives in a secure cookie, not in this page) ---------- */
+async function API(p,body){const r=await fetch('/api/'+p,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const j=await r.json().catch(()=>({}));if(!r.ok)throw Object.assign(new Error(j.error||'Server error '+r.status),{status:r.status});return j}
+async function call(p,b){try{const r=await API(p,b);if(r.state){S=r.state;if(me)me.state=S}if(r.msg)toast(r.msg,9000);return r}catch(e){if(e.status==401)location.reload();else toast(e.message);return null}}
+$('#avs').innerHTML=AVS.map(a=>`<button data-av="${a}" class="${a==X.av?'on':''}">${a}</button>`).join('');
+$('#avs').onclick=e=>{const b=e.target.closest('[data-av]');if(b){X.av=b.dataset.av;$$('[data-av]').forEach(x=>x.classList.toggle('on',x==b))}};
+async function auth(kind){$('#lerr').textContent='';try{enter(await API(kind,{name:$('#ln').value,pass:$('#lp').value,avatar:X.av}))}catch(e){$('#lerr').textContent=e.message}}
+$('#lin').onclick=()=>auth('login');$('#lup').onclick=()=>auth('register');$('#lp').onkeydown=e=>{if(e.key=='Enter')auth('login')};
+async function enter(r){me=r.user;S=me.state;$('#lp').value='';$('#login').hidden=true;$('#app').hidden=false;$('#summon').hidden=!me.admin;await boot()}
+API('me').then(enter).catch(()=>{});
+
+/* ---------- market data ---------- */
+const sNow=()=>Date.now()+skew,I=s=>M[s]||{n:s,e:'🐟',sec:'',a:''};
+const hue=s=>{const i=S.watch.indexOf(s);return((i<0?S.watch.length:i)*137.508+25)%360};
+const hit=(e,s)=>e.sc=='all'||(e.sc=='sec'&&(M[s]||{}).sec==e.sec)||(e.sc=='sym'&&e.target==s);
+const shape=a=>a<0?0:a<15000?a/15000:a<240000?1-(a-15000)/225000:0;
+const ov=s=>{let t=0;const n=sNow();for(const e of evs)if(hit(e,s))t+=e.pct*shape(n-e.t);return t};   // only used to size the fish
+const px=s=>P[s]||0;
+const nw=()=>S.cash+S.vault+Object.keys(S.q).reduce((t,s)=>t+(S.q[s]||0)*(px(s)||S.cost[s]||0),0);
+const ri=n=>RANKS.reduce((a,r,i)=>n>=r[0]?i:a,0);
+async function loadHist(s){if(H[s]!==undefined)return;H[s]=0;try{H[s]=(await API('hist?s='+s)).c}catch(e){H[s]=undefined}}
+async function pulse(){
+ try{const j=await API('pulse');skew=j.now-Date.now();nextAt=j.nextAt;P=j.p;O=j.open;
+  if(j.tk!==TK){if(TK>=0&&j.tk-TK>3)S.watch.forEach(s=>{H[s]=undefined;loadHist(s)});else for(const s of S.watch)if(Array.isArray(H[s]))H[s].push(P[s]);TK=j.tk;lastTick=performance.now()}
+  handleEvents(j.events||[]);
+  if(S.map>0&&nextAt&&nextAt-sNow()<60000&&X.peeked!=nextAt){X.peeked=nextAt;await call('peek',{})}
+  $('#mkt').textContent=BANNER;paint()}catch(e){$('#mkt').textContent='⚠️ Cannot reach the server. Is it still running?'}}
+function handleEvents(list){for(const e of list){if(seen.has(e.id))continue;seen.add(e.id);evs.push(e);if(sNow()-e.t<30000){toast(`${e.mon} ${e.nm}: ${e.tx}`,6500);if(e.k=='bad')X.flash=1}}evs=evs.slice(-12)}
+
+/* ---------- actions (the server does the real work) ---------- */
+function toast(m,ms=4200){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),ms)}
+async function order(){const s=X.sel,r=await call('trade',{s,side:X.mode,amt:+$('#amt').value});if(r){MK.push({a:s,k:H[s].length-1,t:X.mode=='buy'?'b':'s'});X.amt='';$('#amt').value='';paint()}}
+async function buyItem(id){if(await call('shop',{id})){renderSide()}}
+async function vault(dir){if(await call('vault',{dir,amt:+$('#ra').value}))renderSide()}
+async function addWatch(s){if(await call('watch',{s,on:true}))pick(s)}
+async function dropWatch(s){if(await call('watch',{s,on:false})){if(X.sel==s)pick(S.watch[0]);else paint()}}
+function pick(s){X.sel=s;X.amt='';loadHist(s);renderSide()}
+function ask(t,m,ok){return new Promise(r=>{$('#mt').textContent=t;$('#mm').textContent=m;$('#mok').textContent=ok;$('#modal').hidden=false;$('#mok').onclick=()=>{$('#modal').hidden=true;r(1)};$('#mno').onclick=()=>{$('#modal').hidden=true;r(0)}})}
+
+/* ---------- ui ---------- */
+const spark=s=>{const h=H[s];if(!Array.isArray(h))return '<svg></svg>';const a=h.slice(-40),lo=Math.min(...a),hi=Math.max(...a);
+ return `<svg viewBox="0 0 64 24"><polyline fill="none" stroke="${a.at(-1)>=a[0]?'#4ee0b0':'#ff7a68'}" stroke-width="2" stroke-linejoin="round" points="${a.map((v,i)=>`${(i*64/39).toFixed(1)},${(22-(v-lo)/((hi-lo)||1)*20).toFixed(1)}`).join(' ')}"/></svg>`};
+function paint(){
+ if(!S)return;
+ const n=nw(),i=ri(n),pl=n-START;
+ $('#nw').textContent=m0(n);$('#pl').textContent=(pl>=0?'+':'')+m0(pl);$('#pl').className=pl>=0?'up':'dn';$('#cash').textContent=m0(S.cash);$('#rank').textContent=RANKS[i][1]+' '+RANKS[i][2];
+ if(X.ri!=null&&i>X.ri)toast(`🎉 New rank: ${RANKS[i][1]} ${RANKS[i][2]}!`);X.ri=i;
+ $('#blist').innerHTML=S.watch.map(s=>{const p=px(s),pv=O[s],c=p&&pv?(p/pv-1)*100:0,rm=(S.q[s]||0)>0||S.watch.length<2?'':`<span class="rm" data-rm="${s}" title="Stop following" role="button">×</span>`;
+  return `<button class="row ${s==X.sel?'sel':''}" data-id="${s}" style="border-left:4px solid hsl(${hue(s)} 75% 60%)"><span class="ic">${I(s).e}</span><span><b>${s}</b><small>${esc(I(s).n)}</small></span>${spark(s)}<span class="pr"><b>${p?fmt(p):'…'}</b><i class="${c>=0?'up':'dn'}">${c>=0?'▲':'▼'} ${Math.abs(c).toFixed(2)}%</i></span>${rm}</button>`}).join('');
+ const s=X.sel,p=px(s),q=S.q[s]||0;
+ if($('#tP')){$('#tP').textContent=p?fmt(p)+' pearls':'…';$('#tQ').textContent=fmt(q)+' '+s;$('#tC').textContent=q?fmt(S.cost[s]):'–';
+  const l=q&&p?(p/S.cost[s]-1)*100:0,tl=$('#tL');tl.textContent=q?(l>=0?'+':'')+l.toFixed(1)+'%':'–';tl.className=l>=0?'up':'dn';est();
+  if(sNow()<S.lh&&Array.isArray(H[s])){const h=H[s],av=a=>a.reduce((x,y)=>x+y,0)/a.length,mo=av(h.slice(-5))/av(h.slice(-30))-1;$('#fc').textContent='🔭 Momentum: '+(mo>.001?'rising ↗':mo<-.001?'falling ↘':'flat ➝')+' (past moves are not a promise)'}else $('#fc').textContent=''}
+ if($('#vb'))$('#vb').textContent=m0(S.vault);
+ $('#log').innerHTML=S.log.map(x=>`<li>${esc(x)}</li>`).join('')||'<li>No trades yet. The tide is yours.</li>';
+ const held=S.watch.filter(t=>(S.q[t]||0)*px(t)>=1);$('#lg').hidden=X.view!='aq'||!held.length;
+ $('#lg').innerHTML=held.map(t=>`<button class="lg" data-s="${t}" style="--c:hsl(${hue(t)} 75% 60%)"><i></i>${I(t).e} ${t} <small>${m0(S.q[t]*px(t))}</small></button>`).join('');
+ $('#chest').hidden=sNow()<S.chestAt;
+ const now=sNow(),e=[...evs].reverse().find(x=>now-x.t<x.dur),b=$('#evbar');
+ if(!e)b.hidden=true;else{b.hidden=false;b.className=e.k;b.innerHTML=`<span style="font-size:26px">${e.mon}</span> <b>${esc(e.nm)}</b> · ${esc(e.tx)} <i>${esc(e.echo)} Affects: ${e.sc=='all'?'every stock':e.sc=='sec'?esc(e.sec)+' stocks':esc(e.target)} (${e.pct>0?'+':''}${(e.pct*100).toFixed(0)}%).</i>`}
+ if(X.pg=='rank')renderRank()}
+function est(){const v=+($('#amt')||{}).value||0,e=$('#est'),p=px(X.sel);if(!e)return;e.textContent=!v||!p?'':X.mode=='buy'?`You get about ${fmt(v*(1-S.fee)/p)} ${X.sel}. Fee ${fmt(v*S.fee)} pearls.`:`You receive about ${fmt(v*(1-S.fee))} pearls after the ${(S.fee*100).toFixed(2).replace(/\.?0+$/,'')}% fee.`}
+function renderSide(){
+ const el=$('#tp'),s=X.sel,m=I(s);
+ if(X.tab=='trade'){
+  el.innerHTML=`<div class="hd"><span>${m.e}</span><div><b>${esc(m.n)}</b><small>${s}</small></div></div>
+  <details class="about" open><summary>About this company</summary><span class="tag">${esc(m.sec)}</span><br>${esc(m.a)}<br><small class="muted">A fictional company in the ReefStreet ocean.</small></details>
+  <div class="kv"><span>Price</span><b id="tP"></b><span>You hold</span><b id="tQ"></b><span>Average cost</span><b id="tC"></b><span>Profit</span><b id="tL"></b></div>
+  <div class="seg"><button data-m="buy" class="${X.mode=='buy'?'on':''}">Buy</button><button data-m="sell" class="${X.mode=='sell'?'on':''}">Sell</button></div>
+  <label>Pearls to ${X.mode}<input id="amt" type="number" min="0" step="10" value="${esc(X.amt)}"></label>
+  <div class="pre"><button data-p=".25">¼</button><button data-p=".5">½</button><button data-p="1">All</button></div>
+  <p id="est"></p><button class="go" id="go">Place order</button><p id="fc" style="font-size:13px;color:var(--brass)"></p>`;
+  $('#amt').oninput=e=>{X.amt=e.target.value;est()};$('#go').onclick=order;
+  $$('[data-m]').forEach(b=>b.onclick=()=>{X.mode=b.dataset.m;renderSide()});
+  $$('[data-p]').forEach(b=>b.onclick=()=>{const v=X.mode=='buy'?S.cash:(S.q[s]||0)*px(s);X.amt=String(Math.floor(v*b.dataset.p*100)/100);$('#amt').value=X.amt;est()});
+ }else if(X.tab=='harbor'){
+  el.innerHTML=`<p class="muted" style="margin-top:0">Pay for goods and services with your pearls.</p>`+SHOP.map(i=>{const own=(i.id=='oct'&&S.fee<.01)||(i.id=='boat'&&S.boat);return `<div class="item"><span>${i.e}</span><div><b>${i.n}</b><small>${i.d}</small></div><button data-i="${i.id}" ${own?'disabled':''}>${own?'Owned':i.c}</button></div>`}).join('');
+  $$('[data-i]').forEach(b=>b.onclick=()=>buyItem(b.dataset.i));
+ }else{
+  el.innerHTML=`<div class="coral">${'🪸'.repeat(Math.min(10,1+(S.vault/300|0)))}</div><p>Vault balance: <b id="vb"></b> pearls</p>
+  <label>Pearls<input id="ra" type="number" min="0" step="10"></label><div class="pre"><button id="dep">Deposit</button><button id="wd">Withdraw</button></div>
+  <p class="muted" style="font-size:13px"><b>What is this in real life?</b> A savings account (or a money-market fund or Treasury bill). Your pearls are safe from monster events and earn small, steady interest. In the real world that is about 4% per year. Here time is fast-forwarded: 0.2% every 30 seconds, even while you are away (up to an hour). Safe, but slow compared to stocks.</p>`;
+  $('#dep').onclick=()=>vault('in');$('#wd').onclick=()=>vault('out')}
+ paint()}
+async function loadBoard(){
+ try{const r=await API('board');$('#pg-board').innerHTML=`<section class="panel card"><h2>🏆 Leaderboard</h2><p class="muted">Everyone trades the same market. Net worth = pearls + vault + the value of your fish.</p><table><tr><th>#</th><th>Explorer</th><th>Rank</th><th>Net worth</th><th>Return</th><th>Trades</th></tr>${r.map((u,i)=>{const k=RANKS[ri(u.nw)],ret=(u.nw/START-1)*100;return `<tr class="${u.name==me.name?'me':''}"><td>${['🥇','🥈','🥉'][i]||i+1}</td><td>${esc(u.avatar)} ${esc(u.name)}</td><td>${k[1]} ${k[2]}</td><td>${m0(u.nw)}</td><td class="${ret>=0?'up':'dn'}">${ret>=0?'+':''}${ret.toFixed(1)}%</td><td>${u.trades}</td></tr>`}).join('')}</table></section>`}catch(e){}}
+function renderRank(){
+ const n=nw(),i=ri(n),cur=RANKS[i],nx=RANKS[i+1],tot=S.wins+S.losses;
+ $('#pg-rank').innerHTML=`<section class="panel card" style="margin-bottom:14px"><h2>${esc(me.avatar)} ${esc(me.name)}</h2><p class="muted">Explorer since ${new Date(me.joined).toLocaleDateString()}</p>
+  <div class="grid2"><span>Current rank</span><b>${cur[1]} ${cur[2]}</b><span>Net worth</span><b>${m0(n)} pearls</b><span>Highest net worth</span><b>${m0(Math.max(S.peak,n))}</b><span>Trades made</span><b>${S.trades}</b><span>Winning sales</span><b>${tot?Math.round(S.wins/tot*100)+'% ('+S.wins+' of '+tot+')':'none yet'}</b><span>Best single sale</span><b>${S.best?'+'+m0(S.best)+' pearls':'–'}</b><span>Trading fee</span><b>${(S.fee*100).toFixed(2).replace(/\.?0+$/,'')}%</b></div>
+  ${nx?`<p>Next rank: <b>${nx[1]} ${nx[2]}</b> at ${m0(nx[0])} pearls (${m0(nx[0]-n)} to go)</p><div class="bar"><i style="width:${cl((n-cur[0])/(nx[0]-cur[0])*100,0,100)}%"></i></div>`:'<p>You have reached the top of the ocean. 🔱</p>'}
+  <button id="startover">Start over</button></section>
+  <section class="panel card"><h2>The ocean ladder: ${RANKS.length} stages</h2><p class="muted">Your rank depends on your net worth. Everyone starts with ${m0(START)} pearls.</p>
+  <ol class="ladder">${RANKS.map((r,k)=>`<li class="${k==i?'cur':k<i?'done':''}"><span>${r[1]}</span><div><b>${r[2]}</b> <small class="muted">${m0(r[0])}+ pearls</small><p>${r[3]}</p></div></li>`).join('')}</ol></section>`;
+ $('#startover').onclick=async()=>{if(await ask('Start over?','This resets your pearls, fish, vault and log. Your name stays. This cannot be undone.','Yes, reset')){if(await call('reset',{}))location.reload()}}}
+function go(p){X.pg=p;$$('[data-pg]').forEach(b=>b.classList.toggle('on',b.dataset.pg==p));['trade','board','rank'].forEach(k=>$('#pg-'+k).hidden=k!=p);if(p=='board')loadBoard();if(p=='rank')renderRank()}
+
+/* ---------- drawing ---------- */
+const c=$('#c'),g=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1);let CW=800,CH=500;
+function fit(){const r=c.parentElement.getBoundingClientRect();if(!r.width)return;CW=r.width;CH=r.height;c.width=CW*dpr;c.height=CH*dpr;g.setTransform(dpr,0,0,dpr,0,0)}
+new ResizeObserver(fit).observe(c.parentElement);
+c.onmousemove=e=>{X.hov=e.clientX-c.getBoundingClientRect().left};c.onmouseleave=()=>X.hov=null;
+function fish(x,y,s,a,col){g.save();g.translate(x,y);g.rotate(a);g.fillStyle=col;g.beginPath();g.ellipse(0,0,s,s*.55,0,0,7);g.fill();g.beginPath();g.moveTo(-s*.8,0);g.lineTo(-s*1.7,-s*.6);g.lineTo(-s*1.7,s*.6);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(s*.45,-s*.12,s*.16,0,7);g.fill();g.restore()}
+function sea(t,prog){
+ const s=X.sel,h=H[s];
+ if(!Array.isArray(h)||h.length<5){g.fillStyle='#0e3a54';g.fillRect(0,0,CW,CH);g.fillStyle='#eafcff';g.font='600 18px Outfit,sans-serif';g.textAlign='center';g.fillText('Loading the tides…',CW/2,CH/2);return}
+ const N=Math.min(70,h.length-1),pts=h.slice(-N-1),L=pts.length,top=CH*.2,bot=CH*.72,dx=(CW-130)/N;
+ const lo0=Math.min(...pts),hi0=Math.max(...pts),pad=(hi0-lo0)*.15||hi0*.01||1,lo=lo0-pad,hi=hi0+pad;
+ const Y=v=>top+(1-(v-lo)/(hi-lo))*(bot-top),Xp=i=>20+(i-prog)*dx;
+ const mood=cl((h.at(-1)/h[Math.max(0,h.length-21)]-1)*25,-1,1),Mx=(n,u,d)=>mood>=0?mix(n,u,mood):mix(n,d,-mood);
+ const c1=Mx([98,176,214],[255,170,100],[30,42,60]),c2=Mx([190,230,242],[255,214,150],[70,70,100]);
+ const sg=g.createLinearGradient(0,0,0,bot);sg.addColorStop(0,`rgb(${c1.map(Math.round)})`);sg.addColorStop(1,`rgb(${c2.map(Math.round)})`);g.fillStyle=sg;g.fillRect(0,0,CW,CH);
+ const sk=(mood+1)/2,sx=CW*.8,sy=CH*.1+(1-sk)*CH*.25,sgd=g.createRadialGradient(sx,sy,0,sx,sy,100);
+ sgd.addColorStop(0,`rgba(255,240,180,${.25+sk*.7})`);sgd.addColorStop(1,'rgba(255,200,120,0)');g.fillStyle=sgd;g.beginPath();g.arc(sx,sy,100,0,7);g.fill();
+ g.fillStyle=`rgba(255,244,200,${.3+sk*.7})`;g.beginPath();g.arc(sx,sy,24,0,7);g.fill();
+ for(let i=0;i<5;i++){const x=((t*8*(.5+i*.15)+i*CW/4)%(CW+200))-100,y=CH*(.07+i*.045);g.fillStyle=mood<0?`rgba(60,64,84,${.35-mood*.3})`:'rgba(255,255,255,.4)';
+  [[0,0,40,16],[30,-8,34,18],[-30,-4,30,14]].forEach(q=>{g.beginPath();g.ellipse(x+q[0],y+q[1],q[2],q[3],0,0,7);g.fill()})}
+ if(mood<-.3){g.strokeStyle='rgba(200,220,255,.35)';g.lineWidth=1;for(let i=0;i<60;i++){const x=(i*53.7)%CW,y=(i*91+t*500)%bot;g.beginPath();g.moveTo(x,y);g.lineTo(x-6,y+16);g.stroke()}}
+ if(X.flash>0){g.fillStyle=`rgba(255,255,255,${X.flash*.45})`;g.fillRect(0,0,CW,bot);X.flash-=.04}
+ const amp=4+Math.abs(mood)*16;
+ const P_=k=>pts.map((v,i)=>{const x=Xp(i);return{x,y:Y(v)-k*12+Math.sin(x*.035+t*2+k*2)*amp*.5+Math.sin(x*.012-t*1.3+k)*amp*.5}});
+ const trace=Pt=>{g.beginPath();g.moveTo(Pt[0].x,Pt[0].y);for(let i=1;i<Pt.length;i++)g.quadraticCurveTo(Pt[i-1].x,Pt[i-1].y,(Pt[i-1].x+Pt[i].x)/2,(Pt[i-1].y+Pt[i].y)/2);g.lineTo(Pt.at(-1).x,Pt.at(-1).y)};
+ let MAIN;
+ for(const k of [2,1,0]){const Pt=P_(k);trace(Pt);g.lineTo(Pt.at(-1).x,CH);g.lineTo(Pt[0].x,CH);g.closePath();
+  const wg=g.createLinearGradient(0,top,0,CH);wg.addColorStop(0,k?'rgba(40,200,190,.22)':'rgba(25,195,178,.82)');wg.addColorStop(1,k?'rgba(10,60,90,.2)':'rgba(5,24,42,.97)');g.fillStyle=wg;g.fill();
+  if(!k){trace(Pt);g.strokeStyle='rgba(234,252,255,.92)';g.lineWidth=3;g.stroke();MAIN=Pt}}
+ g.strokeStyle='#0b6e6a';g.lineWidth=5;g.lineCap='round';
+ for(let i=0;i<14;i++){const x=i*CW/13+10,hh=60+(i*37%50);g.beginPath();g.moveTo(x,CH);g.quadraticCurveTo(x+Math.sin(t+i)*14,CH-hh/2,x+Math.sin(t*1.2+i)*20,CH-hh);g.stroke()}
+ for(let i=0;i<24;i++){const x=(i*83)%CW,y=CH-((t*30*(.5+(i%5)*.2)+i*47)%(CH*.5));g.fillStyle='rgba(255,255,255,.25)';g.beginPath();g.arc(x,y,2+i%4,0,7);g.fill()}
+ g.font='12px Outfit,sans-serif';g.textAlign='left';g.textBaseline='middle';
+ for(let j=0;j<4;j++){const v=lo+(hi-lo)*j/3,y=Y(v);g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;g.setLineDash([4,6]);g.beginPath();g.moveTo(0,y);g.lineTo(CW-100,y);g.stroke();g.setLineDash([]);g.fillStyle='rgba(234,252,255,.75)';g.fillText(fmt(v),CW-92,y)}
+ const ath=Math.max(...h);
+ for(let i=0;i<L;i++)if(i%2==0||i==L-1){const p=MAIN[i],q=MAIN[Math.min(i+1,L-1)],r=MAIN[Math.max(i-1,0)],ang=Math.atan2(q.y-r.y,q.x-r.x),up=pts[i]>=(pts[i-1]||pts[i]),gold=pts[i]==ath;
+  fish(p.x,p.y,i==L-1?13:3+i/L*5,ang,gold?'#ffd54a':up?'hsl(160,70%,62%)':'hsl(8,85%,68%)')}
+ const lp=MAIN[L-1],lab=fmt(px(s)||pts.at(-1));g.font='600 14px Outfit,sans-serif';const tw=g.measureText(lab).width+20;
+ g.fillStyle='#0b2234e6';g.beginPath();g.roundRect(lp.x-tw/2,lp.y-48,tw,26,10);g.fill();g.fillStyle='#eafcff';g.textAlign='center';g.fillText(lab,lp.x,lp.y-35);
+ if((S.q[s]||0)>0){const y=Y(S.cost[s]);g.strokeStyle='#e6b450';g.setLineDash([8,6]);g.lineWidth=2;g.beginPath();g.moveTo(0,y);g.lineTo(CW-100,y);g.stroke();g.setLineDash([]);g.fillStyle='#e6b450';g.textAlign='left';g.fillText('🪙 your average '+fmt(S.cost[s]),12,y-10)}
+ g.font='20px serif';g.textAlign='center';
+ for(const m of MK)if(m.a==s){const i=m.k-(h.length-L);if(i>=0&&i<L)g.fillText(m.t=='b'?'⚓':'💰',MAIN[i].x,MAIN[i].y-24)}
+ if(S.boat){const bx=CW*.35+Math.sin(t*.3)*50,i=cl(Math.round((bx-20)/dx+prog),0,L-1);g.font='34px serif';g.fillText('⛵',bx,MAIN[i].y-16)}
+ if(X.hov!=null){const i=cl(Math.round((X.hov-20)/dx+prog),0,L-1),p=MAIN[i];g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=1;g.beginPath();g.moveTo(p.x,0);g.lineTo(p.x,CH);g.stroke();g.fillStyle='#fff';g.font='600 13px Outfit,sans-serif';g.textAlign='center';g.fillText(fmt(pts[i]),p.x,p.y+22)}
+ g.font='14px Outfit,sans-serif';const nt=evs.length?evs.slice(-3).map(e=>e.mon+' '+e.nm+': '+e.tx).join('     •     '):'Calm seas. Headlines will drift in here.',w=g.measureText(nt).width+CW;
+ g.fillStyle='rgba(4,16,25,.55)';g.fillRect(0,CH-30,CW,30);g.fillStyle='#eafcff';g.textAlign='left';g.fillText(nt,CW-((t*55)%w),CH-14)}
+function aqua(t){
+ const gr=g.createLinearGradient(0,0,0,CH);gr.addColorStop(0,'#1a8fa8');gr.addColorStop(.6,'#0b3a58');gr.addColorStop(1,'#041019');g.fillStyle=gr;g.fillRect(0,0,CW,CH);
+ g.fillStyle='rgba(255,255,255,.05)';for(let i=0;i<5;i++){const x=CW*(i+.5)/5+Math.sin(t*.3+i)*30;g.beginPath();g.moveTo(x-20,0);g.lineTo(x+20,0);g.lineTo(x+120,CH);g.lineTo(x-60,CH);g.fill()}
+ g.fillStyle='#17384a';g.fillRect(0,CH-36,CW,36);g.strokeStyle='#0b6e6a';g.lineWidth=5;g.lineCap='round';
+ for(let i=0;i<16;i++){const x=i*CW/15+10,hh=50+(i*37%60);g.beginPath();g.moveTo(x,CH-30);g.quadraticCurveTo(x+Math.sin(t+i)*14,CH-hh/2,x+Math.sin(t*1.2+i)*20,CH-hh);g.stroke()}
+ const now=sNow(),live=evs.filter(e=>now-e.t<e.dur),held=S.watch.filter(s=>(S.q[s]||0)*px(s)>=1),pos={};
+ g.textAlign='center';g.textBaseline='middle';
+ held.forEach((s,ai)=>{
+  const val=S.q[s]*px(s),n=cl(Math.round(Math.sqrt(val)/3),1,40),X0=CW*.2+CW*.62*((ai*.618)%1),Y0=CH*(.26+.4*((ai*.37)%1)),sz=cl(1+ov(s)*6,.7,1.6),col=hue(s);pos[s]={X0,Y0};
+  g.globalAlpha=X.hi&&X.hi!=s?.22:1;
+  for(let j=0;j<n;j++){
+   const ph=t*.6+j*2.4+ai;let fx=X0+Math.cos(ph)*(30+j%7*10),fy=Y0+Math.sin(t*.8+j*1.7)*(20+j%5*8),gone=false;
+   for(const e of live){if(e.k!='bad'||!hit(e,s))continue;const a=now-e.t,mx=a/24000*(CW+260)-130,my=CH*.45+Math.sin(a/800)*CH*.15;
+    if(a<24000&&Math.abs(fx-mx)<180){fx+=Math.sign(fx-mx)*(180-Math.abs(fx-mx))*.7;fy+=Math.sign(fy-my)*30}
+    if(mx>fx&&a<e.dur*.6&&(j%10)<cl(Math.round(Math.abs(e.pct)*70),1,7))gone=true}
+   if(!gone)fish(fx,fy,(7+j%3)*sz,Math.atan2(Math.cos(t*.8+j*1.7)*.8,-Math.sin(ph)*.6),`hsl(${col},75%,${55+j%3*6}%)`)}
+  const lab=`${I(s).e} ${s}`;g.font='600 13px Outfit,sans-serif';const w=g.measureText(lab).width+16;
+  g.fillStyle=`hsl(${col},60%,22%)`;g.strokeStyle=`hsl(${col},75%,60%)`;g.lineWidth=2;g.beginPath();g.roundRect(X0-w/2,Y0-84,w,22,11);g.fill();g.stroke();g.fillStyle='#fff';g.fillText(lab,X0,Y0-73)});
+ g.globalAlpha=1;
+ for(const e of live){const a=now-e.t;if(a>24000)continue;
+  if(e.k=='bad'){g.font='120px serif';g.fillText(e.mon,a/24000*(CW+260)-130,CH*.45+Math.sin(a/800)*CH*.15)}
+  else{const mx=CW+130-a/24000*(CW+260);g.font='100px serif';g.fillText(e.mon,mx,CH*.16+Math.sin(a/600)*14);
+   for(const s of held)if(hit(e,s)){const o=pos[s];for(let i=0;i<8;i++){g.fillStyle='#ffd166';g.beginPath();g.arc(o.X0+((i*53)%120)-60,o.Y0-90+((a/2500+i*.13)%1)*130,3,0,7);g.fill()}}}}
+ if(!held.length){g.fillStyle='#eafcffcc';g.font='italic 600 22px Fraunces,Georgia,serif';g.fillText('Your aquarium is empty. Buy a stock to fill it with fish.',CW/2,CH*.4)}
+ g.font=(30+cl(S.cash/300,0,40))+'px serif';g.fillText('🧰',CW-70,CH-60);g.font='600 13px Outfit,sans-serif';g.fillStyle='#fff';g.fillText(m0(S.cash)+' pearls',CW-70,CH-14);
+ if(S.vault>0){g.font='34px serif';g.fillText('🪸'.repeat(Math.min(8,1+(S.vault/300|0))),CW-190,CH-50)}}
+function frame(now){if(S&&X.pg=='trade'){g.clearRect(0,0,CW,CH);X.view=='sea'?sea(now/1000,cl((now-lastTick)/2000,0,1)):aqua(now/1000)}requestAnimationFrame(frame)}
+
+/* ---------- wiring ---------- */
+$('#blist').onclick=e=>{const r=e.target.closest('[data-rm]');if(r){e.stopPropagation();dropWatch(r.dataset.rm);return}const b=e.target.closest('[data-id]');if(b)pick(b.dataset.id)};
+function showSearch(){const q=$('#srch').value.trim().toLowerCase(),r=$('#sres');
+ const l=(q?UNI.filter(u=>u.s.toLowerCase().startsWith(q)||u.n.toLowerCase().includes(q)||u.sec.toLowerCase().includes(q)):UNI.filter(u=>!S.watch.includes(u.s))).slice(0,30);
+ r.hidden=false;r.innerHTML=l.length?l.map(x=>`<button data-add="${x.s}">${x.e} <b>${x.s}</b> ${esc(x.n)} <small class="muted">${esc(x.sec)}</small></button>`).join(''):'<p class="muted">No matches</p>'}
+$('#srch').oninput=showSearch;$('#srch').onfocus=showSearch;
+$('#sres').onclick=e=>{const b=e.target.closest('[data-add]');if(!b)return;addWatch(b.dataset.add);$('#srch').value='';$('#sres').hidden=true};
+document.addEventListener('click',e=>{if(!e.target.closest('#bhead'))$('#sres').hidden=true});
+$('#lg').onmouseover=e=>{const b=e.target.closest('[data-s]');X.hi=b?b.dataset.s:null};$('#lg').onmouseleave=()=>X.hi=null;
+$('#lg').onclick=e=>{const b=e.target.closest('[data-s]');if(b)pick(b.dataset.s)};
+$$('[data-v]').forEach(b=>b.onclick=()=>{X.view=b.dataset.v;$$('[data-v]').forEach(x=>x.classList.toggle('on',x==b));paint()});
+$$('[data-t]').forEach(b=>b.onclick=()=>{X.tab=b.dataset.t;$$('[data-t]').forEach(x=>x.classList.toggle('on',x==b));renderSide()});
+$$('[data-pg]').forEach(b=>b.onclick=()=>go(b.dataset.pg));$('#rank').onclick=()=>go('rank');
+$('#summon').onclick=async()=>{try{await API('summon',{});pulse()}catch(e){toast(e.message)}};
+$('#out').onclick=async()=>{try{await API('logout',{})}catch(e){}location.reload()};
+$('#chest').onclick=()=>call('chest',{}).then(paint);
+async function boot(){
+ UNI=await API('universe');UNI.forEach(u=>M[u.s]=u);
+ X.sel=S.watch[0];
+ if(!booted){booted=true;setInterval(pulse,2000);setInterval(()=>{if(X.pg=='board')loadBoard()},5000);requestAnimationFrame(frame)}
+ S.watch.forEach(loadHist);await pulse();renderSide()}
+</script></body></html>
