@@ -6,12 +6,16 @@ Everyone shares the same simulated market. Prices move in waves, ocean creatures
 
 No real money or live stock market data is used.
 
+**Play ReefStreet:** https://reefstreet.onrender.com/
+
+*Hosted on Render Free. The site may take a little time to load after inactivity, and game progress may reset when the server restarts.*
+
 Requirements: Node.js 18 or newer. No external dependencies.
 
 ## Run it on your computer
 
 ```bash
-git clone https://github.com/YOUR_NAME/reefstreet.git
+git clone https://github.com/AW73639/ReefStreet.git
 cd reefstreet
 node server.js
 ```
@@ -131,4 +135,4 @@ Never commit `.env`, `users.json` or `market.json`. They are already in `.gitign
 
 ## Disclaimer
 
-ReefStreet is an educational game with fictional companies and made-up prices. It is not financial advice.
+ReefStreet is an educational game featuring real-world companies with simulated stock prices. No real money is used. It is not financial advice.
