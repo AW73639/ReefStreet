@@ -1,11 +1,12 @@
 # 🐚 ReefStreet: the ocean exchange
 
-A multiplayer stock-market game for total beginners. Everyone trades the same **simulated** ocean market with game
-"pearls" (no real money, no real companies). Prices move in waves, price points are fish, events arrive as sea monsters
-and mermaids, and your portfolio lives in your own aquarium. There is a leaderboard, a 7-stage rank ladder, a harbor shop
-and a savings "reef vault".
+A multiplayer ocean-themed stock market game designed to help beginners learn about investing. Players trade stocks from 10 real-world companies, including Apple, Microsoft, NVIDIA, and Tesla, using fictional pearls and simulated stock prices.
 
-Zero dependencies: just Node.js 18 or newer.
+Everyone shares the same simulated market. Prices move in waves, ocean creatures represent price points, and random events inspired by real-world economic situations affect the market. Players can build portfolios, compete on the leaderboard, progress through seven ranks, shop at the harbor, and save pearls in the reef vault.
+
+No real money or live stock market data is used.
+
+Requirements: Node.js 18 or newer. No external dependencies.
 
 ## Run it on your computer
 
@@ -30,6 +31,16 @@ Copy `.env.example` to `.env` and edit it. Real environment variables work too.
 | `ADMIN_NAME` | This explorer sees the "Summon event" button (handy for demos) |
 | `DATA_DIR` | Where `users.json` and `market.json` are saved. Use a persistent disk when hosting |
 | `MAX_USERS` | Account cap (default 500) |
+
+To enable the **Summon event** button for one explorer, create a `.env` file in the project folder and set:
+
+```dotenv
+ADMIN_NAME=YOUR_EXPLORER_NAME
+```
+
+Replace `YOUR_EXPLORER_NAME` with the username of your ReefStreet account. Restart the server after making changes.
+
+Keep `.env` private and do not upload it to GitHub.
 
 ## Add or change companies
 
